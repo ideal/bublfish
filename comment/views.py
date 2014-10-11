@@ -2,8 +2,16 @@
 
 from django.http import JsonResponse
 
-JSON_CONTENT_TYPE = 'application/json; charset=utf-8'
+DATA_OK  = {'status': 200,
+            'data': {}
+           }
+DATA_ERR = {'status': 500,
+            'data': {},
+            'info': '',
+           }
+
+CONTENT_TYPE_JSON = 'application/json; charset=utf-8'
 
 def index(request):
-    return JsonResponse(data = {'status': 200, 'data': {}},
-               content_type = JSON_CONTENT_TYPE)
+    return JsonResponse(data = DATA_OK,
+               content_type = CONTENT_TYPE_JSON)
