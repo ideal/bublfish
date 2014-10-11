@@ -10,13 +10,32 @@ from api.response import KWARGS_JSON
 from api.response import DATA_OK
 from api.response import DATA_ERR
 
+from api.models import Comment
+
+try:
+    import urlparse
+except:
+    import urllib.parse as urlparse
+
 log = logging.getLogger(__name__)
 
 def index(request):
     return JsonResponse(data = DATA_OK, **KWARGS_JSON)
 
 def pull(request):
-    return JsonResponse(data = DATA_ERR,
+    referer = _parse_url(request.META.get('HTTP-REFERER'))
+    page    = _parse_url(request.GET.get('page'))
+
+    if (referer and page) and (referer['host'] != page['host']):
+        from . import response
+        return response.error(403, 'Wrong request')
+
+    url = page['url'] if page else (referer['url'] if referer else None)
+    if url is None:
+        from . import response
+        return response.error(400, 'Wrong parameters')
+
+    return JsonResponse(data = DATA_OK,
                content_type = CONTENT_TYPE_JSON)
 
 def post(request):
@@ -25,3 +44,11 @@ def post(request):
         return response.error(405, 'Wrong method')
 
     return JsonResponse(data = DATA_OK, **KWARGS_JSON)
+
+def _parse_url(url):
+    """
+    """
+    if url is None:
+        return None
+    parsed = urlparse.urlparse(url)
+    return {'host': parsed.netloc, 'url': parsed.netloc + parsed.path}
