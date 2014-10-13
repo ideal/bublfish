@@ -23,7 +23,7 @@ def index(request):
     return JsonResponse(data = DATA_OK, **KWARGS_JSON)
 
 def pull(request):
-    referer = _parse_url(request.META.get('HTTP-REFERER'))
+    referer = _parse_url(request.META.get('HTTP_REFERER'))
     page    = _parse_url(request.GET.get('page'))
 
     if (referer and page) and (referer['host'] != page['host']):
