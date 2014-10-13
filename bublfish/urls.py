@@ -7,5 +7,5 @@ urlpatterns = patterns('',
 
     # url(r'^admin/', include(admin.site.urls)),
     url(r'^$', 'bublfish.views.index', name='index'),
-    url(r'^comment/', include('api.urls')),
+    url(r'^comment/?', include('api.urls')),
 )
