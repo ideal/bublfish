@@ -1,5 +1,5 @@
 """
-Django settings for comment project.
+Django settings for BublFish project.
 
 For more information on this file, see
 https://docs.djangoproject.com/en/1.7/topics/settings/
@@ -49,9 +49,9 @@ MIDDLEWARE_CLASSES = (
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
 )
 
-ROOT_URLCONF = 'comment.urls'
+ROOT_URLCONF = 'bublfish.urls'
 
-WSGI_APPLICATION = 'comment.wsgi.application'
+WSGI_APPLICATION = 'bublfish.wsgi.application'
 
 
 # Database
@@ -102,7 +102,7 @@ LOGGING = {
         'file': {
             'level': 'DEBUG',
             'class': 'logging.FileHandler',
-            'filename': '/tmp/comment.debug.log',
+            'filename': os.getenv('HOME') + '/var/log/bublfish.debug.log',
             'formatter': 'verbose',
         },
     },

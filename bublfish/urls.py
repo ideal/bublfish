@@ -6,6 +6,6 @@ urlpatterns = patterns('',
     # url(r'^blog/', include('blog.urls')),
 
     # url(r'^admin/', include(admin.site.urls)),
-    url(r'^$', 'comment.views.index', name='index'),
+    url(r'^$', 'bublfish.views.index', name='index'),
     url(r'^comment/', include('api.urls')),
 )

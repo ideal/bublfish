@@ -44,7 +44,8 @@ def post(request):
         from . import response
         return response.error(405, 'Wrong method', request.GET.get('callback'))
 
-    return JsonpResponse(data = DATA_OK, callback = request.GET.get('callback'),
+    comment = Comment()
+    return JsonpResponse(data = DATA_OK, callback = request.POST.get('callback'),
                          **KWARGS_JSON)
 
 def _parse_url(url):
