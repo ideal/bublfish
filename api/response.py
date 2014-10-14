@@ -18,6 +18,10 @@ CONTENT_TYPE_JSON = 'application/json; charset=utf-8'
 KWARGS_JSON = {'content_type': CONTENT_TYPE_JSON}
 
 def error(status_code, status_msg, callback = None, is_json=True):
+    """
+    Return a error response, depending on ``is_json``.
+    """
+
     if not is_json:
         return HttpResponse(content=status_msg, status=status_code)
 
