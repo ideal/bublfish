@@ -8,11 +8,15 @@ from api.response import JsonpResponse
 from api.response import KWARGS_JSON
 from api.response import DATA_ERR
 
-def login_required(is_json=True):
+def login_required(function=None, is_json=True):
     """
     """
 
-    return _login_required_decorator(is_json)
+    dectorator = _login_required_decorator(is_json)
+    if function:
+        return dectorator(function)
+    else:
+        return dectorator
 
 def _login_required_decorator(is_json):
     """
