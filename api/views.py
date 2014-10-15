@@ -5,7 +5,9 @@ import logging
 from django.http import JsonResponse
 from django.utils import timezone
 from django.shortcuts import render
+from django.core.exceptions import ValidationError
 
+import bublfish.settings as settings
 from api.response import JsonpResponse
 from api.response import CONTENT_TYPE_JSON
 from api.response import KWARGS_JSON
@@ -54,7 +56,24 @@ def post(request):
     """
     comment = Comment()
     comment.comment_date = timezone.now()
-    comment.comment_page = request.POST['content']
+    comment.comment_page = request.POST.get('page')
+    comment.comment_content = request.POST.get('content')
+    if request.POST.get('parent', None):
+        comment.comment_type   = Comment.TYPE_REPLY
+        try:
+            comment.comment_parent = int(request.POST.get('parent'))
+        except:
+            comment.comment_type   = Comment.TYPE_NORMAL
+        else:
+            comment.comment_type   = Comment.TYPE_REPLY
+
+    try:
+        comment.clean_fields()
+    except ValidationError as e:
+        from . import response
+        return response.error(400, 'Bad data',
+                              request.POST.get('callback'),
+                              inner_data = e.message_dict if settings.DEBUG else None)
 
     comment.save()
     return JsonpResponse(data = DATA_OK, callback = request.POST.get('callback'),

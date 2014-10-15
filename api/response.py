@@ -17,7 +17,7 @@ CONTENT_TYPE_JSON = 'application/json; charset=utf-8'
 
 KWARGS_JSON = {'content_type': CONTENT_TYPE_JSON}
 
-def error(status_code, status_msg, callback = None, is_json=True):
+def error(status_code, status_msg, callback = None, is_json=True, inner_data=None):
     """
     Return a error response, depending on ``is_json``.
     """
@@ -28,6 +28,8 @@ def error(status_code, status_msg, callback = None, is_json=True):
     data = DATA_ERR
     data['status'] = status_code
     data['info']   = status_msg
+    if inner_data:
+        data['data'] = inner_data
     return JsonpResponse(data, callback, **KWARGS_JSON)
 
 class JsonpResponse(HttpResponse):
