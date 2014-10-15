@@ -10,8 +10,8 @@ from api.response import DATA_ERR
 
 def login_required(function=None, is_json=True):
     """
-    Return a dectorator if ``function`` is None (i.e. @login_required(is_json=True)),
-    or call the dectorator if not None (i.e. @login_required).
+    Return a dectorator if ``function`` is None (e.g. @login_required(is_json=True)),
+    or call the dectorator if not None (e.g. @login_required).
 
     """
 
