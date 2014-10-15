@@ -59,7 +59,6 @@ def post(request):
     comment.comment_page = request.POST.get('page')
     comment.comment_content = request.POST.get('content')
     if request.POST.get('parent', None):
-        comment.comment_type   = Comment.TYPE_REPLY
         try:
             comment.comment_parent = int(request.POST.get('parent'))
         except:
