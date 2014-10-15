@@ -55,6 +55,7 @@ def post(request):
     }
     """
     comment = Comment()
+    comment.user_id = request.user.id;
     comment.comment_date = timezone.now()
     comment.comment_page = request.POST.get('page')
     comment.comment_content = request.POST.get('content')
