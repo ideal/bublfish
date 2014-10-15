@@ -45,7 +45,6 @@ def post_required(view_func):
 
     @wraps(view_func, assigned=available_attrs(view_func))
     def _wrapped_view(request, *args, **kwargs):
-        print "post_required"
         if request.method != 'POST':
             from . import response
             return response.error(405, 'Wrong method', request.GET.get('callback'))
