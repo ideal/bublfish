@@ -2,8 +2,9 @@
 
 import logging
 
-from django.shortcuts import render
 from django.http import JsonResponse
+from django.utils import timezone
+from django.shortcuts import render
 
 from api.response import JsonpResponse
 from api.response import CONTENT_TYPE_JSON
@@ -43,8 +44,19 @@ def pull(request):
 @post_required
 @login_required
 def post(request):
-
+    """
+    Data:
+    {
+     "page": "http://foo.bar.com/blog/page/1",
+     "content": "Hello, 来自三体世界的评论",
+     "parent" : 0,
+    }
+    """
     comment = Comment()
+    comment.comment_date = timezone.now()
+    comment.comment_page = request.POST['content']
+
+    comment.save()
     return JsonpResponse(data = DATA_OK, callback = request.POST.get('callback'),
                          **KWARGS_JSON)
 
