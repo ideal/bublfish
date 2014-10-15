@@ -40,7 +40,7 @@ def pull(request):
     return JsonpResponse(data = DATA_OK, callback = request.GET.get('callback'),
                content_type = CONTENT_TYPE_JSON)
 
-@login_required
+@login_required()
 def post(request):
     if request.method != 'POST':
         from . import response

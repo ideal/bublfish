@@ -1,18 +1,18 @@
 # -*- encoding: utf-8 -*-
 
 from functools import wraps
+from django.http import HttpResponse
 from django.utils.decorators import available_attrs
 
 from api.response import JsonpResponse
 from api.response import KWARGS_JSON
 from api.response import DATA_ERR
 
-def login_required(view_func, is_json=True):
+def login_required(is_json=True):
     """
     """
 
-    dectorator = _login_required_decorator(is_json)
-    return dectorator(view_func)
+    return _login_required_decorator(is_json)
 
 def _login_required_decorator(is_json):
     """
