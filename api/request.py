@@ -15,8 +15,7 @@ def login_required(function=None, is_json=True):
     dectorator = _login_required_decorator(is_json)
     if function:
         return dectorator(function)
-    else:
-        return dectorator
+    return dectorator
 
 def _login_required_decorator(is_json):
     """
