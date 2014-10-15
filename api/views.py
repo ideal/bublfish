@@ -10,6 +10,7 @@ from api.response import CONTENT_TYPE_JSON
 from api.response import KWARGS_JSON
 from api.response import DATA_OK
 from api.response import DATA_ERR
+from api.request  import login_required
 
 from api.models import Comment
 
@@ -39,6 +40,7 @@ def pull(request):
     return JsonpResponse(data = DATA_OK, callback = request.GET.get('callback'),
                content_type = CONTENT_TYPE_JSON)
 
+@login_required
 def post(request):
     if request.method != 'POST':
         from . import response
