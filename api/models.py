@@ -23,6 +23,9 @@ class UserManager(BaseUserManager):
         if not username:
             raise ValueError('The given username must be set')
         email = self.normalize_email(email)
+        if avatar is None:
+            from api.util import make_default_avatar
+            avatar = make_default_avatar(email)
         user  = self.model(username=username, email=email, avatar=avatar,
                            is_staff=is_staff, is_active=True,
                            is_superuser=is_superuser, last_login=now,
@@ -51,7 +54,7 @@ class User(AbstractUser):
     objects = UserManager()
 
     USERNAME_FIELD = 'username'
-    REQUIRED_FIELDS = [ ]
+    REQUIRED_FIELDS = ['email']
 
 class Comment(models.Model):
 

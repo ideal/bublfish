@@ -1,4 +1,7 @@
 # -*- encoding: utf-8 -*-
+#
+# Copyright (C) 2014 Shang Yuanchun <idealities@gmail.com>
+#
 
 import logging
 
@@ -6,6 +9,7 @@ from django.http import JsonResponse
 from django.utils import timezone
 from django.shortcuts import render
 from django.core.exceptions import ValidationError
+from django.utils.translation import ugettext as _
 
 import bublfish.settings as settings
 from api.response import JsonpResponse
@@ -33,12 +37,12 @@ def pull(request):
 
     if (referer and page) and (referer['host'] != page['host']):
         from . import response
-        return response.error(403, 'Wrong request', request.GET.get('callback'))
+        return response.error(403, _('Wrong request'), request.GET.get('callback'))
 
     url = page['url'] if page else (referer['url'] if referer else None)
     if url is None:
         from . import response
-        return response.error(400, 'Wrong parameters', request.GET.get('callback'))
+        return response.error(400, _('Wrong parameters'), request.GET.get('callback'))
 
     return JsonpResponse(data = DATA_OK, callback = request.GET.get('callback'),
                content_type = CONTENT_TYPE_JSON)
@@ -71,7 +75,7 @@ def post(request):
         comment.clean_fields()
     except ValidationError as e:
         from . import response
-        return response.error(400, 'Bad data',
+        return response.error(400, _('Bad data'),
                               request.POST.get('callback'),
                               inner_data = e.message_dict if settings.DEBUG else None)
 

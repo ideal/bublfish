@@ -3,6 +3,7 @@
 from functools import wraps
 from django.http import HttpResponse
 from django.utils.decorators import available_attrs
+from django.utils.translation import ugettext as _
 
 from api.response import JsonpResponse
 from api.response import KWARGS_JSON
@@ -32,7 +33,7 @@ def _login_required_decorator(is_json):
                 return view_func(request, *args, **kwargs)
 
             from . import response
-            return response.error(403, 'Need login',
+            return response.error(403, _('Need login'),
                                   request.GET.get('callback'), is_json)
 
         return _wrapped_view
@@ -47,7 +48,7 @@ def post_required(view_func):
     def _wrapped_view(request, *args, **kwargs):
         if request.method != 'POST':
             from . import response
-            return response.error(405, 'Wrong method', request.GET.get('callback'))
+            return response.error(405, _('Wrong method'), request.GET.get('callback'))
 
         return view_func(request, *args, **kwargs)
     return _wrapped_view
