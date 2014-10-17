@@ -34,7 +34,8 @@ def _login_required_decorator(is_json):
 
             from . import response
             return response.error(403, _('Need login'),
-                                  request.GET.get('callback'), is_json)
+                                  (request.GET.get('callback') if request.method == 'GET' else request.POST.get('callback')),
+                                  is_json)
 
         return _wrapped_view
 
