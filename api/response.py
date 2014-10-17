@@ -39,7 +39,7 @@ class JsonpResponse(HttpResponse):
         if safe and not isinstance(data, dict):
             raise TypeError('In order to allow non-dict objects to be '
                 'serialized set the safe parameter to False')
-        kwargs.setdefault('content_type', 'application/json; charset=utf-8')
+        kwargs.setdefault('content_type', CONTENT_TYPE_JSON)
         if callback:
             import django.utils.html as html
             callback = html.escape(callback)
