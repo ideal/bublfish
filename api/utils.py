@@ -13,6 +13,9 @@ log = logging.getLogger(__name__)
 
 def make_default_avatar(email):
     """
+    If social accout info does not contain an avatar url,
+    this function is called to try to get one from gravatar,
+    if still none, use the default avatar from gravatar.
     """
 
     digest = hashlib.md5(
