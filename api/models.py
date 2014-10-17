@@ -14,7 +14,7 @@ class UserManager(BaseUserManager):
     def _create_user(self, username, email, avatar,
                      is_staff, is_superuser, **extra_fields):
         """
-        Creates and saves a User with the given username, email, password and
+        Creates and saves a User with the given username, email and
         avatar.
 
         """
