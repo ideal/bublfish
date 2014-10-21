@@ -123,8 +123,8 @@ LOGGING = {
 
 AUTHENTICATION_BACKENDS = (
     'social.backends.douban.DoubanOAuth2',
-    'social.backends.douban.WeiboOAuth2',
-    'social.backends.douban.GithubOAuth2',
+    'social.backends.weibo.WeiboOAuth2',
+    'social.backends.github.GithubOAuth2',
 )
 
 SOCIAL_AUTH_USER_MODEL = 'api.User'
