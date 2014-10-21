@@ -36,6 +36,7 @@ INSTALLED_APPS = (
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'api',
+    'social.apps.django_app.default',
 )
 
 MIDDLEWARE_CLASSES = (
@@ -117,3 +118,13 @@ LOGGING = {
         },
     },
 }
+
+# Social auth
+
+AUTHENTICATION_BACKENDS = (
+    'social.backends.douban.DoubanOAuth2',
+    'social.backends.douban.WeiboOAuth2',
+    'social.backends.douban.GithubOAuth2',
+)
+
+SOCIAL_AUTH_USER_MODEL = 'api.User'
