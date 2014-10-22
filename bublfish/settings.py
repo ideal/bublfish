@@ -35,6 +35,7 @@ INSTALLED_APPS = (
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'account',
     'api',
     'social.apps.django_app.default',
 )
@@ -54,7 +55,7 @@ ROOT_URLCONF = 'bublfish.urls'
 WSGI_APPLICATION = 'bublfish.wsgi.application'
 
 # Auth
-AUTH_USER_MODEL = 'api.User'
+AUTH_USER_MODEL = 'account.User'
 
 # Database
 # https://docs.djangoproject.com/en/1.7/ref/settings/#databases
@@ -116,15 +117,20 @@ LOGGING = {
             'level': 'DEBUG',
             'propagate': True,
         },
+        'account': {
+            'handlers': ['file'],
+            'level': 'DEBUG',
+            'propagate': True,
+        },
     },
 }
 
 # Social auth
 
 AUTHENTICATION_BACKENDS = (
-    'social.backends.douban.DoubanOAuth2',
+    'social.backends.douban.DoubanOAuth',
     'social.backends.weibo.WeiboOAuth2',
     'social.backends.github.GithubOAuth2',
 )
 
-SOCIAL_AUTH_USER_MODEL = 'api.User'
+SOCIAL_AUTH_USER_MODEL = 'account.User'
