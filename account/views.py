@@ -10,11 +10,18 @@ from django.views.decorators.http import require_POST
 from social.actions import do_auth, do_complete, do_disconnect
 from social.apps.django_app.utils import psa
 
+from api.response import JsonpResponse
+from api.response import DATA_OK
+
 log = logging.getLogger(__name__)
 
 @psa('social:complete')
 def auth(request, backend):
-    return do_auth(request.backend, redirect_name=REDIRECT_FIELD_NAME)
+    # return do_auth(request.backend, redirect_name=REDIRECT_FIELD_NAME)
+    data = DATA_OK
+    data['data']['url'] = request.backend.auth_url()
+    return JsonpResponse(data = DATA_OK, callback = request.GET.get('callback'))
+
 
 
 @csrf_exempt

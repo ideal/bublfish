@@ -128,9 +128,12 @@ LOGGING = {
 # Social auth
 
 AUTHENTICATION_BACKENDS = (
-    'social.backends.douban.DoubanOAuth',
+    'social.backends.douban.DoubanOAuth2',
     'social.backends.weibo.WeiboOAuth2',
     'social.backends.github.GithubOAuth2',
 )
+
+SOCIAL_AUTH_DOUBAN_OAUTH2_KEY    = ''
+SOCIAL_AUTH_DOUBAN_OAUTH2_SECRET = ''
 
 SOCIAL_AUTH_USER_MODEL = 'account.User'
