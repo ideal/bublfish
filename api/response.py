@@ -1,5 +1,6 @@
 # -*- encoding: utf-8 -*-
 
+import copy
 import json
 
 from django.http import HttpResponse
@@ -25,7 +26,7 @@ def error(status_code, status_msg, callback = None, is_json=True, inner_data=Non
     if not is_json:
         return HttpResponse(content=status_msg, status=status_code)
 
-    data = DATA_ERR
+    data = copy.deepcopy(DATA_ERR)
     data['status'] = status_code
     data['info']   = status_msg
     if inner_data:

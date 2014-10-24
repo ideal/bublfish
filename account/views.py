@@ -1,5 +1,6 @@
 # -*- encoding: utf-8 -*-
 
+import copy
 import logging
 
 from django.contrib.auth import login, REDIRECT_FIELD_NAME
@@ -18,7 +19,7 @@ log = logging.getLogger(__name__)
 @psa('social:complete')
 def auth(request, backend):
     # return do_auth(request.backend, redirect_name=REDIRECT_FIELD_NAME)
-    data = DATA_OK
+    data = copy.deepcopy(DATA_OK)
     data['data']['url'] = request.backend.auth_url()
     return JsonpResponse(data, callback = request.GET.get('callback'))
 
@@ -30,7 +31,9 @@ def complete(request, backend, *args, **kwargs):
                        redirect_name=REDIRECT_FIELD_NAME, *args, **kwargs)
 
 def profile(request):
-    data = DATA_OK
+    data = copy.deepcopy(DATA_OK)
+    data['data']['username'] = request.user.username;
+    data['data']['avatar']   = request.user.avatar;
     return JsonpResponse(data, callback = request.GET.get('callback'))
 
 @login_required
