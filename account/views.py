@@ -20,9 +20,7 @@ def auth(request, backend):
     # return do_auth(request.backend, redirect_name=REDIRECT_FIELD_NAME)
     data = DATA_OK
     data['data']['url'] = request.backend.auth_url()
-    return JsonpResponse(data = DATA_OK, callback = request.GET.get('callback'))
-
-
+    return JsonpResponse(data, callback = request.GET.get('callback'))
 
 @csrf_exempt
 @psa('social:complete')
@@ -31,6 +29,9 @@ def complete(request, backend, *args, **kwargs):
     return do_complete(request.backend, _do_login, request.user,
                        redirect_name=REDIRECT_FIELD_NAME, *args, **kwargs)
 
+def profile(request):
+    data = DATA_OK
+    return JsonpResponse(data, callback = request.GET.get('callback'))
 
 @login_required
 @psa()
