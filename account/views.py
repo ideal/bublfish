@@ -11,6 +11,7 @@ from django.views.decorators.http import require_POST
 from social.actions import do_auth, do_complete, do_disconnect
 from social.apps.django_app.utils import psa
 
+import api.request
 from api.response import JsonpResponse
 from api.response import DATA_OK
 
@@ -30,6 +31,7 @@ def complete(request, backend, *args, **kwargs):
     return do_complete(request.backend, _do_login, request.user,
                        redirect_name=REDIRECT_FIELD_NAME, *args, **kwargs)
 
+@api.request.login_required
 def profile(request):
     data = copy.deepcopy(DATA_OK)
     data['data']['username'] = request.user.username;
