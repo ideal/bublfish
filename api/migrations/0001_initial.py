@@ -15,7 +15,7 @@ class Migration(migrations.Migration):
             fields=[
                 ('comment_id', models.AutoField(serialize=False, primary_key=True)),
                 ('user_id', models.IntegerField(default=0, db_index=True)),
-                ('comment_page', models.URLField(default=b'', db_index=True)),
+                ('comment_page', models.CharField(default=b'', max_length=200, db_index=True)),
                 ('comment_type', models.SmallIntegerField(default=1, help_text=b'1: normal comment, 2: reply')),
                 ('comment_date', models.DateTimeField(help_text=b'date published')),
                 ('comment_content', models.TextField(max_length=4096)),

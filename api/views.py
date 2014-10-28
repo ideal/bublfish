@@ -3,6 +3,7 @@
 # Copyright (C) 2014 Shang Yuanchun <idealities@gmail.com>
 #
 
+import copy
 import logging
 
 from django.http import JsonResponse
@@ -12,6 +13,7 @@ from django.core.exceptions import ValidationError
 from django.utils.translation import ugettext as _
 
 import bublfish.settings as settings
+from account.models import User
 from api.response import JsonpResponse
 from api.response import CONTENT_TYPE_JSON
 from api.response import KWARGS_JSON
@@ -33,11 +35,15 @@ def index(request):
 
 def pull(request):
     """
-    Request: page=
+    Request: page=http://foo.bar.com
+
     Response:
     {
         "status": 200,
-        "data": [],
+        "data": [
+                {"id": 1, "date": "2014-10-28 18:09:00", "content": "呵呵", "parent": 0, "author": "ideal", "avatar": "http://"},
+                {"id": 2, "date": "2014-10-28 18:10:00", "content": "哈哈", "parent": 0, "author": "ideal", "avatar": "http://"},
+                ],
     }
     """
     referer = _parse_url(request.META.get('HTTP_REFERER'))
@@ -52,8 +58,20 @@ def pull(request):
         from . import response
         return response.error(400, _('Wrong parameters'), request.GET.get('callback'))
 
-    comments = Comment.objects.filter()
-    return JsonpResponse(data = DATA_OK, callback = request.GET.get('callback'),
+    data = copy.deepcopy(DATA_OK)
+    data['data'] = []
+    comments = Comment.objects.filter(comment_page=url).order_by('-comment_date')
+    for comment in comments:
+        user = User.objects.get(id=comment.user_id)
+        data['data'].append({
+                "id": comment.comment_id,
+                "date": timezone.localtime(comment.comment_date).strftime("%Y-%m-%d %H:%M:%S"),
+                "content": comment.comment_content,
+                "parent": comment.comment_parent,
+                "author": user.username,
+                "avatar": user.avatar,
+                })
+    return JsonpResponse(data = data, callback = request.GET.get('callback'),
                content_type = CONTENT_TYPE_JSON)
 
 @post_required
@@ -68,9 +86,9 @@ def post(request):
     }
     """
     comment = Comment()
-    comment.user_id = request.user.id;
+    comment.user_id = request.user.id
     comment.comment_date = timezone.now()
-    comment.comment_page = request.POST.get('page')
+    comment.comment_page = _parse_url(request.POST.get('page'))['url']
     comment.comment_content = request.POST.get('content')
     if request.POST.get('parent', None):
         try:
