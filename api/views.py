@@ -32,6 +32,14 @@ def index(request):
     return JsonResponse(data = DATA_OK, **KWARGS_JSON)
 
 def pull(request):
+    """
+    Request: page=
+    Response:
+    {
+        "status": 200,
+        "data": [],
+    }
+    """
     referer = _parse_url(request.META.get('HTTP_REFERER'))
     page    = _parse_url(request.GET.get('page'))
 
@@ -44,6 +52,7 @@ def pull(request):
         from . import response
         return response.error(400, _('Wrong parameters'), request.GET.get('callback'))
 
+    comments = Comment.objects.filter()
     return JsonpResponse(data = DATA_OK, callback = request.GET.get('callback'),
                content_type = CONTENT_TYPE_JSON)
 
@@ -51,7 +60,7 @@ def pull(request):
 @login_required
 def post(request):
     """
-    Data:
+    Request:
     {
      "page": "http://foo.bar.com/blog/page/1",
      "content": "Hello, 来自三体世界的评论",
