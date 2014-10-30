@@ -11,7 +11,7 @@ from django.utils import timezone
 from django.shortcuts import render
 from django.core.exceptions import ValidationError
 from django.utils.translation import ugettext as _
-from django.core.paginator import Paginator
+from django.core.paginator import Paginator, EmptyPage
 
 import bublfish.settings as settings
 from account.models import User
@@ -76,6 +76,10 @@ def pull(request):
     pagenum = 1 if pagenum <= 0 else pagenum
 
     paginator = Paginator(comments, limit)
+    try:
+        comments  = paginator.page(pagenum)
+    except EmptyPage:
+        comments = []
     for comment in comments:
         user = User.objects.get(id=comment.user_id)
         data['data'].append({
