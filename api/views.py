@@ -63,7 +63,8 @@ def pull(request):
 
     data = copy.deepcopy(DATA_OK)
     data['data'] = []
-    comments  = Comment.objects.filter(comment_page=url, comment_type=Comment.TYPE_NORMAL).order_by('-comment_date')
+    comments  = Comment.objects.filter(comment_page=url,
+                                comment_type=Comment.TYPE_NORMAL).order_by('-comment_date')
     try:
         limit = int(request.GET.get('limit'))
     except:
