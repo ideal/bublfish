@@ -11,6 +11,7 @@ from django.utils import timezone
 from django.shortcuts import render
 from django.core.exceptions import ValidationError
 from django.utils.translation import ugettext as _
+from django.core.paginator import Paginator
 
 import bublfish.settings as settings
 from account.models import User
@@ -32,6 +33,8 @@ log = logging.getLogger(__name__)
 
 def index(request):
     return JsonResponse(data = DATA_OK, **KWARGS_JSON)
+
+DEFAULT_PAGE_SIZE = 10
 
 def pull(request):
     """
@@ -60,7 +63,19 @@ def pull(request):
 
     data = copy.deepcopy(DATA_OK)
     data['data'] = []
-    comments = Comment.objects.filter(comment_page=url).order_by('-comment_date')
+    comments  = Comment.objects.filter(comment_page=url, comment_type=Comment.TYPE_NORMAL).order_by('-comment_date')
+    try:
+        limit = int(request.GET.get('limit'))
+    except:
+        limit = DEFAULT_PAGE_SIZE
+    try:
+        pagenum = int(request.GET.get('page'))
+    except:
+        pagenum = 1
+    limit   = DEFAULT_PAGE_SIZE if limit <= 0 else limit
+    pagenum = 1 if pagenum <= 0 else pagenum
+
+    paginator = Paginator(comments, limit)
     for comment in comments:
         user = User.objects.get(id=comment.user_id)
         data['data'].append({
