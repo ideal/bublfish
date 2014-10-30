@@ -35,7 +35,7 @@ def index(request):
 
 def pull(request):
     """
-    Request: page=http://foo.bar.com
+    Request: url=http://foo.bar.com&page=1&limit=10
 
     Response:
     {
@@ -47,13 +47,13 @@ def pull(request):
     }
     """
     referer = _parse_url(request.META.get('HTTP_REFERER'))
-    page    = _parse_url(request.GET.get('page'))
+    pageurl = _parse_url(request.GET.get('url'))
 
-    if (referer and page) and (referer['host'] != page['host']):
+    if (referer and pageurl) and (referer['host'] != pageurl['host']):
         from . import response
         return response.error(403, _('Wrong request'), request.GET.get('callback'))
 
-    url = page['url'] if page else (referer['url'] if referer else None)
+    url = pageurl['url'] if pageurl else (referer['url'] if referer else None)
     if url is None:
         from . import response
         return response.error(400, _('Wrong parameters'), request.GET.get('callback'))
