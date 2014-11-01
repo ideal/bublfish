@@ -63,6 +63,20 @@ def pull(request):
 
     data = copy.deepcopy(DATA_OK)
     data['data'] = []
+
+    def fill_comments(comments):
+        for comment in comments:
+            user = User.objects.get(id=comment.user_id)
+            data['data'].append({
+                    "id": comment.comment_id,
+                    "date": timezone.localtime(comment.comment_date).strftime("%Y-%m-%d %H:%M:%S"),
+                    "content": comment.comment_content,
+                    "parent": comment.comment_parent,
+                    "author": user.username,
+                    "avatar": user.avatar,
+                    })
+
+    # Normal comments
     comments  = Comment.objects.filter(comment_page=url,
                                 comment_type=Comment.TYPE_NORMAL).order_by('-comment_date')
     try:
@@ -81,16 +95,14 @@ def pull(request):
         comments  = paginator.page(pagenum)
     except EmptyPage:
         comments = []
-    for comment in comments:
-        user = User.objects.get(id=comment.user_id)
-        data['data'].append({
-                "id": comment.comment_id,
-                "date": timezone.localtime(comment.comment_date).strftime("%Y-%m-%d %H:%M:%S"),
-                "content": comment.comment_content,
-                "parent": comment.comment_parent,
-                "author": user.username,
-                "avatar": user.avatar,
-                })
+    fill_comments(comments)
+
+    # Reply comments
+    # TODO: however this will fetch all reply comments.
+    comments  = Comment.objects.filter(comment_page=url,
+                                comment_type=Comment.TYPE_REPLY).order_by('comment_id')
+    fill_comments(comments)
+
     return JsonpResponse(data = data, callback = request.GET.get('callback'),
                content_type = CONTENT_TYPE_JSON)
 
