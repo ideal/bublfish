@@ -21,6 +21,7 @@ from api.response import KWARGS_JSON
 from api.response import DATA_OK
 from api.response import DATA_ERR
 from api.request  import login_required, post_required
+import api.utils
 
 from api.models import Comment
 
@@ -35,6 +36,12 @@ def index(request):
     return JsonResponse(data = DATA_OK, **KWARGS_JSON)
 
 DEFAULT_PAGE_SIZE = 10
+
+class _User(object):
+    username = _("anonymous")
+    avatar   = api.utils.DEFAULT_GRAVATAR_URL
+
+_user = _User()
 
 def pull(request):
     """
@@ -66,7 +73,10 @@ def pull(request):
 
     def fill_comments(comments):
         for comment in comments:
-            user = User.objects.get(id=comment.user_id)
+            try:
+                user = User.objects.get(id=comment.user_id)
+            except:
+                user = _user
             data['data'].append({
                     "id": comment.comment_id,
                     "date": timezone.localtime(comment.comment_date).strftime("%Y-%m-%d %H:%M:%S"),
@@ -131,11 +141,12 @@ def post(request):
             comment.comment_type   = Comment.TYPE_REPLY
 
     if comment.comment_parent > 0:
-        parent = Comment.objects.get(comment_id=parent)
-    except Comment.DoesNotExist:
-        from . import response
-        return response.error(400, _('Bad data'),
-                              request.POST.get('callback'))
+        try:
+            parent = Comment.objects.get(comment_id=parent)
+        except Comment.DoesNotExist:
+            from . import response
+            return response.error(400, _('Bad data'),
+                                  request.POST.get('callback'))
 
     try:
         comment.clean_fields()
