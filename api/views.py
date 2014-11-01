@@ -130,6 +130,13 @@ def post(request):
         else:
             comment.comment_type   = Comment.TYPE_REPLY
 
+    if comment.comment_parent > 0:
+        parent = Comment.objects.get(comment_id=parent)
+    except Comment.DoesNotExist:
+        from . import response
+        return response.error(400, _('Bad data'),
+                              request.POST.get('callback'))
+
     try:
         comment.clean_fields()
     except ValidationError as e:
