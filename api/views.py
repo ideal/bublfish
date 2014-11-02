@@ -232,3 +232,16 @@ def _parse_url(url):
         return None
     parsed = urlparse.urlparse(url)
     return {'host': parsed.netloc, 'url': parsed.netloc + parsed.path}
+
+def view_500(request):
+    """
+    """
+
+    import sys
+    tp, ex, tb = sys.exc_info()
+    log.exception(ex)
+
+    value = _('System error')
+    from . import response
+    return response.error(500, value,
+           request.GET.get('callback') if request.method=='GET' else request.POST.get('callback'))

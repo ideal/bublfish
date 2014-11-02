@@ -10,3 +10,6 @@ urlpatterns = patterns('',
     url(r'^comment/', include('api.urls')),
     url('', include('account.urls', namespace='social')),
 )
+
+import api.views
+handler500 = api.views.view_500

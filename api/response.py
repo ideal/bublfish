@@ -41,6 +41,8 @@ class JsonpResponse(HttpResponse):
             raise TypeError('In order to allow non-dict objects to be '
                 'serialized set the safe parameter to False')
         kwargs.setdefault('content_type', CONTENT_TYPE_JSON)
+        if data['status'] >= 500:
+            kwargs.setdefault('status', data['status'])
         if callback:
             import django.utils.html as html
             callback = html.escape(callback)
