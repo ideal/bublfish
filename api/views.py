@@ -6,7 +6,7 @@
 import copy
 import logging
 
-from django.http import JsonResponse
+from django.http import HttpResponse, JsonResponse
 from django.utils import timezone
 from django.shortcuts import render
 from django.core.exceptions import ValidationError
@@ -51,8 +51,10 @@ def pull(request):
     {
         "status": 200,
         "data": [
-                {"id": 1, "date": "2014-10-28 18:09:00", "content": "呵呵", "parent": 0, "author": "ideal", "avatar": "http://"},
-                {"id": 2, "date": "2014-10-28 18:10:00", "content": "哈哈", "parent": 0, "author": "ideal", "avatar": "http://"},
+                {"id": 1, "date": "2014-10-28 18:09:00", "content": "呵呵",
+                 "parent": 0, "author": "ideal", "avatar": "http://"},
+                {"id": 2, "date": "2014-10-28 18:10:00", "content": "哈哈",
+                 "parent": 0, "author": "ideal", "avatar": "http://"},
                 ],
     }
     """
@@ -81,6 +83,8 @@ def pull(request):
                     "id": comment.comment_id,
                     "date": timezone.localtime(comment.comment_date).strftime("%Y-%m-%d %H:%M:%S"),
                     "content": comment.comment_content,
+                    "ups": comment.comment_ups,
+                    "downs": comment.comment_downs,
                     "parent": comment.comment_parent,
                     "author": user.username,
                     "avatar": user.avatar,
@@ -159,6 +163,65 @@ def post(request):
     comment.save()
     return JsonpResponse(data = DATA_OK, callback = request.POST.get('callback'),
                          **KWARGS_JSON)
+
+@post_required
+@login_required
+def delete(request):
+    """
+    Request:
+    {
+     "id": 1986,
+    }
+    """
+    result = _check_comment(request)
+    if isinstance(result, HttpResponse):
+        return result
+
+    Comment.objects.filter(comment_id = result).delete()
+    return JsonpResponse(data = DATA_OK, callback = request.POST.get('callback'),
+                         **KWARGS_JSON)
+
+@post_required
+@login_required
+def update(request):
+    """
+    Request:
+    {
+     "id": 1986,
+     "content": "Hello, 来自三体世界的评论",
+    }
+    """
+    result = _check_comment(request)
+    if isinstance(result, HttpResponse):
+        return result
+
+    Comment.objects.filter(comment_id = result).update(comment_content = request.POST.get('content'))
+    return JsonpResponse(data = DATA_OK, callback = request.POST.get('callback'),
+                         **KWARGS_JSON)
+
+def _check_comment(request):
+    """
+    """
+
+    from . import response
+
+    try:
+        cid = int(request.POST.get('id'))
+    except:
+        return response.error(400, _('Bad data'),
+                              request.POST.get('callback'))
+
+    try:
+        comment = Comment.objects.get(comment_id = cid)
+    except:
+        return response.error(400, _('No such comment'),
+                              request.POST.get('callback'))
+
+    if comment.user_id != request.user.id:
+        return response.error(400, _('No privileges'),
+                              request.POST.get('callback'))
+
+    return cid
 
 def _parse_url(url):
     """
