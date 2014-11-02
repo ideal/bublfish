@@ -195,7 +195,9 @@ def update(request):
     if isinstance(result, HttpResponse):
         return result
 
-    Comment.objects.filter(comment_id = result).update(comment_content = request.POST.get('content'))
+    if request.POST.get('content'):
+        Comment.objects.filter(comment_id = result).update(
+                        comment_content = request.POST.get('content'))
     return JsonpResponse(data = DATA_OK, callback = request.POST.get('callback'),
                          **KWARGS_JSON)
 
