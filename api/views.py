@@ -241,7 +241,6 @@ def view_500(request):
     tp, ex, tb = sys.exc_info()
     log.exception(ex)
 
-    value = _('System error')
     from . import response
-    return response.error(500, value,
-           request.GET.get('callback') if request.method=='GET' else request.POST.get('callback'))
+    return response.error(500, _('System error'),
+           getattr(request, request.method).get('callback'))
