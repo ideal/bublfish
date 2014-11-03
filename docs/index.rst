@@ -36,8 +36,11 @@ Status code
 ===========
 
     200: OK
+
     400: Bad request data
+
     403: Need login
+
     500: System error
 
 Jsonp
