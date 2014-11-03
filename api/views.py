@@ -126,9 +126,9 @@ def post(request):
     """
     Request:
     {
-     "page": "http://foo.bar.com/blog/page/1",
-     "content": "Hello, 来自三体世界的评论",
-     "parent" : 0,
+        "page": "http://foo.bar.com/blog/page/1",
+        "content": "Hello, 来自三体世界的评论",
+        "parent" : 0,
     }
     """
     comment = Comment()
@@ -170,7 +170,7 @@ def delete(request):
     """
     Request:
     {
-     "id": 1986,
+        "id": 1986,
     }
     """
     result = _check_comment(request)
@@ -187,8 +187,8 @@ def update(request):
     """
     Request:
     {
-     "id": 1986,
-     "content": "Hello, 来自三体世界的评论",
+        "id": 1986,
+        "content": "Hello, 来自三体世界的评论",
     }
     """
     result = _check_comment(request)
@@ -200,6 +200,38 @@ def update(request):
                         comment_content = request.POST.get('content'))
     return JsonpResponse(data = DATA_OK, callback = request.POST.get('callback'),
                          **KWARGS_JSON)
+
+@post_required
+@login_required
+def vote(request):
+    """
+    Request:
+    {
+        "id": 1986,
+        "action": "up",
+    }
+    ``action``: up, down
+    """
+    try:
+        cid = int(request.POST.get('id'))
+    except:
+        from . import response
+        return response.error(400, _('Bad data'),
+                              request.POST.get('callback'))
+    action = request.POST.get('action')
+    if not action in ('up', 'down'):
+        from . import response
+        return response.error(400, _('Bad data'),
+                              request.POST.get('callback'))
+
+    # TODO: duplicate vote
+    field = (action == 'up' and 'comment_ups' or 'comment_downs')
+    from django.db import connection
+    cursor = connection.cursor()
+    cursor.execute('UPDATE `api_comment` SET `' + field + '`=`' + field + '`+1 WHERE `comment_id`=%s', [cid])
+    return JsonpResponse(data = DATA_OK, callback = request.POST.get('callback'),
+                         **KWARGS_JSON)
+
 
 def _check_comment(request):
     """
