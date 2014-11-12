@@ -8,6 +8,8 @@ urlpatterns = patterns('',
         name='begin'),
     url(r'^complete/(?P<backend>[^/]+)/$', views.complete,
         name='complete'),
+    url(r'^logout/$', views.logout_,
+        name='logout'),
     url(r'^profile/$', views.profile,
         name='profile'),
     # disconnection

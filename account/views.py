@@ -3,7 +3,7 @@
 import copy
 import logging
 
-from django.contrib.auth import login, REDIRECT_FIELD_NAME
+from django.contrib.auth import login, logout, REDIRECT_FIELD_NAME
 from django.contrib.auth.decorators import login_required
 from django.views.decorators.csrf import csrf_exempt, csrf_protect
 from django.views.decorators.http import require_POST
@@ -30,6 +30,14 @@ def complete(request, backend, *args, **kwargs):
     """Authentication complete view"""
     return do_complete(request.backend, _do_login, request.user,
                        redirect_name=REDIRECT_FIELD_NAME, *args, **kwargs)
+
+@csrf_exempt
+@api.request.login_required
+def logout_(request):
+    """
+    """
+    logout(request)
+    return JsonpResponse(DATA_OK, callback = request.GET.get('callback'))
 
 @api.request.login_required
 def profile(request):
